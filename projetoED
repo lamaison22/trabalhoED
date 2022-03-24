@@ -1,0 +1,219 @@
+#include<stdio.h>
+#include <stdlib.h>
+#include <string.h>
+//funcoes
+
+struct date{
+    int dia,mes,ano;
+};
+typedef struct date Data;
+struct listaAlunos{
+    char matricula[10];
+    char nome[40];
+     Data *nascimento;
+    float nota;
+    struct listaAlunos *proximo;
+};
+typedef struct listaAlunos Aluno;
+
+// struct Lista {
+//   struct Aluno aluno;
+//   struct Lista* next;
+// };
+
+
+Data* criaData(int dia, int mes, int ano){
+    Data *novo = malloc(sizeof(Data));
+    novo->dia = dia;
+    novo->mes = mes;
+    novo->ano = ano;
+
+    return novo;
+}
+
+//funcao q insere
+Aluno* novoAluno(Aluno *head){
+    Aluno *aux, *novo;
+    int dia, mes, ano;
+    aux = malloc(sizeof(Aluno));
+    // printf("Digite a matricula \n");
+    scanf("%s", aux->matricula);
+    //    printf("Digite o nome \n");
+
+
+    scanf("%s", aux->nome);
+    // printf("Digite a data de nascimento \n");
+
+    scanf("%d/%d/%d", &dia, &mes, &ano);
+    aux->nascimento = criaData(dia, mes, ano);
+    // printf("Digite a nota \n");
+
+    scanf("%f", &aux -> nota);
+    //aqui pro proximo
+    aux->proximo = NULL;
+
+    //aqui cria o primeiro elemento 
+    if(head == NULL){
+        return aux;
+    }
+    //aqui encadeia 
+    novo = head;
+    while(novo->proximo != NULL){
+        novo = novo -> proximo;
+    }
+    novo -> proximo = aux;
+    //aq sempre retorna o primeiro elemento
+    return head;
+}
+void listarAlunos(Aluno *head){
+    Aluno *aux;
+    if(head==NULL){
+        printf("Lista vazia \n");
+    }
+    else if(head!=NULL){
+        aux=head;
+        while(aux!=NULL){
+            printf("%s,%s,%d/,%d/,%d/,%.2f \n",aux->matricula,aux->nome,aux->nascimento->dia,aux->nascimento->mes,aux->nascimento->ano,aux->nota);
+            aux=aux->proximo;
+        }
+        return;
+    }
+
+
+}
+void finalizar(Aluno *head){
+    Aluno *aux;
+    while((head != NULL)){
+        //vai passando pro proximo a apagando o anterior
+        aux = head;
+        head = head -> proximo;
+        free(aux);
+        printf("-");
+    }
+    printf("\n\n");
+}
+
+
+void excluir(Aluno *head){
+    char matricula[11]; 
+    scanf("%s", matricula);
+    Aluno *aux,*anterior,*depois,*temporario;
+    aux = head;
+    anterior = NULL;
+    temporario=NULL;
+    depois=NULL;
+    if(aux == NULL){
+        printf("Lista Vazia!\n");
+        return NULL;
+    }
+    while(aux!=NULL){
+        if (strcmp(aux->matricula,matricula)==0 && aux==head){
+            
+                // temporario=head;
+                // free(head);
+                // head=temporario->proximo;
+                head=head->proximo;
+                
+                free(aux);
+                //por algum motivo nao consigo apagar o primeiro elemento
+
+                break;        
+        }
+            else if(aux!=head){
+                depois=aux->proximo;
+
+                anterior->proximo=depois;
+                
+
+                free(aux);
+            
+            }
+        
+        else{
+            anterior=aux;
+            aux=aux->proximo;
+        }
+    }
+    return;
+}
+  
+
+
+
+void listarAlunosInverso(Aluno *head){
+    Aluno *aux;
+    aux=head;
+    if(head==NULL){
+        return;
+        //quando ela sai daqui ela vai printar la embaixo voltando todas as chamadas q ficaram aguardando
+    }
+    //aqui vai passando o proximo ate dar nulo no if acima
+    listarAlunosInverso(aux->proximo);
+        printf("%s,%s,%d/,%d/,%d/,%.2f \n",aux->matricula,aux->nome,aux->nascimento->dia,aux->nascimento->mes,aux->nascimento->ano,aux->nota);
+        //dps de printar tudo ela sai nesse return e volta pro menu
+        return;
+}
+void tamanhoLista(Aluno *head){
+    Aluno *aux;
+    int tamanho=0;
+    if(head==NULL){
+        printf("Lista vazia \n");
+    }
+    else if(head!=NULL){
+        aux=head;
+        while(aux!=NULL){
+            tamanho++;
+            aux=aux->proximo;
+        }
+        printf("Tamanho: %d \n",tamanho);
+        return;
+}
+
+}
+void menu(Aluno *head){
+    int opcao;
+    while(1){
+        scanf("%d", &opcao);
+        if(opcao == 0){
+            finalizar(head);
+            break;
+        }
+        if(opcao == 1){
+            if(head == NULL){
+                head = novoAluno(head);
+            }
+            else{
+                novoAluno(head);
+            }
+        }
+        if(opcao == 2){
+            excluir(head);
+        }
+        if(opcao == 3){
+            listarAlunos(head);
+        }
+        if(opcao == 4){
+            if(head == NULL){
+                printf("Lista Vazia!\n");
+            }
+            else{
+                listarAlunosInverso(head);
+            }
+        }
+        if(opcao == 5){
+            tamanhoLista(head);
+        }      
+    }
+}
+
+int main(){
+    Aluno *head = NULL;
+    menu(head);
+
+    return 0;
+}
+
+
+
+
+
